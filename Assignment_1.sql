@@ -3,7 +3,9 @@
 	--FOR CREATING DATABASE 
 	 	CREATE DATABASE Assignments;
 	--FOR CREATING SCHEMA
-		CRATE SCHEMA assignment1;
+		CREATE SCHEMA assignment1;
+	--FOR CREATING TABLE
+		CREATE TABLE assignment1.table1;
 		
 ------------------------------------------------------------------------------------------------------------------		
 --2. Create two tables with primary and foreign key constraints. Define relationship in the table.
@@ -243,6 +245,28 @@ SELECT * FROM racing1;
 
 INSERT INTO race VALUES('Ford','Efg',1987,409800); 
 
+---------------------
+
+-- iii)INDEX--(USED FOR PERFORMANCE OPTIMIZATION)
+
+SELECT * FROM race;
+
+EXPLAIN ANALYZE SELECT * FROM race;  
+--Seq Scan on race  (cost=0.00..18.10 rows=810 width=72) (actual time=0.006..0.007 rows=15 loops=1)
+--Execution Time: 0.016 ms
+
+--NOW CREATING INDEX FOR PERFORMANCE OPTIMIZATION
+
+CREATE INDEX race_index ON race(price);
+EXPLAIN ANALYZE SELECT * FROM race;  
+--Seq Scan on race  (cost=0.00..1.15 rows=15 width=72) (actual time=0.006..0.009 rows=15 loops=1)
+--Execution Time: 0.022 ms
+
+--HERE WE CAN CLEARLY SEE TIME OF EXECUTION AND COST ARE DECREASED AFTER CRETAING INDEX
+
+--WE CAN ALSO CREATE INDEX ON MULTIPLE COLUMN
+CREATE INDEX price_year ON race(price,year);
+
 
 --------------------------------------------------------------------------------------------------------
 --5. Demo the use of concurrency, transaction isolation, ACID properties with the use of SQL query.
@@ -364,6 +388,31 @@ SELECT * FROM fav;
 
 --ACID ISOLATION
 
+--.ATOMIC : ALL OR NOTHING	
+			--SO, BASICALLY WHEN WE MAKE SOME CHANGES IN THE DATABSE IT WILL EITHER APPEAR TO EVERYONE OR NOT APPEAR TO EVERYONE. 
+
+--SO THIS CHANGES WILL APPEAR TO EVERYONE
+
+BEGIN;
+	SELECT howmuch FROM fav WHERE post_id=1 AND account_id=1;
+	UPDATE fav SET howmuch=898 WHERE account_id=1 AND post_id=1;
+	SELECT howmuch FROM fav WHERE account_id=1 AND post_id=1;
+COMMIT;   
+
+--ISOLATION : 
+			--IF TWO TRANSACTION ARE RUNNING CONCURRENTLY THEN IT WILL NOT HAVE TO AFFECT ANOTHER TRANSACTION
+			--WE CAN CLEARLY SEE IN TRANSACTION PART
+			
+--DURABILITY :  
+			--IF WE CAN MAKE CHANGES IN DATABSE THEN IT WILL SAVE FOREVER IN SYSTEM OR DATABSE DESPITE OF HAVING SYSTEM FAILURE ISSUE.
+	
+BEGIN;
+	SELECT howmuch FROM fav WHERE post_id=1 AND account_id=1;
+	UPDATE fav SET howmuch=898 WHERE account_id=1 AND post_id=1;
+	SELECT howmuch FROM fav WHERE account_id=1 AND post_id=1;
+COMMIT;   
+
+--AFTER DOING COMMIT IT WILL SAVE FOREVER.
 
 
 
